@@ -9,6 +9,7 @@ import { FieldDisplay } from "./components/FieldDisplay";
 import { FieldManager } from "./components/FieldManager";
 import { GpsMarker } from "./components/GpsMarker";
 import { GpsPanel } from "./components/GpsPanel";
+import { PassNavigator } from "./components/PassNavigator";
 import { useFieldPolygon } from "./hooks/useFieldPolygon";
 import { useRouteComputation } from "./hooks/useRouteComputation";
 import { useGpsTracking } from "./hooks/useGpsTracking";
@@ -28,6 +29,7 @@ function App() {
   const [followMode, setFollowMode] = useState(true);
   const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentPass, setCurrentPass] = useState<number | null>(null);
 
   const handleCalculate = useCallback(() => {
     if (polygon) {
@@ -41,6 +43,7 @@ function App() {
     setIsImported(false);
     setImportError(null);
     setActiveFieldId(null);
+    setCurrentPass(null);
   }, [clearPolygon, clearRoute]);
 
   const handlePolygonCreated = useCallback(
@@ -160,13 +163,20 @@ function App() {
         />
       </div>
       <div className="map-container">
+        {route && (
+          <PassNavigator
+            currentPass={currentPass}
+            totalPasses={route.passCount + route.headlandLapSizes.length}
+            onChangePass={setCurrentPass}
+          />
+        )}
         <MapView>
           <PolygonDrawer
             onPolygonCreated={handlePolygonCreated}
             onPolygonCleared={clearPolygon}
           />
           <FieldDisplay polygon={polygon} isImported={isImported} />
-          <RouteDisplay route={route} />
+          <RouteDisplay route={route} currentPass={currentPass} />
           {gps.isTracking && gps.position && (
             <GpsMarker
               position={gps.position}

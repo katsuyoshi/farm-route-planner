@@ -636,6 +636,82 @@
   text-align: center;
 }
 
+/* Pass Navigator */
+.pass-navigator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.btn-pass-nav {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pass-nav:active {
+  background: #e5e7eb;
+}
+
+.btn-pass-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.pass-display {
+  padding: 0 12px;
+  height: 40px;
+  border: none;
+  border-left: 1px solid var(--panel-border);
+  border-right: 1px solid var(--panel-border);
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.pass-display:active {
+  background: #f3f4f6;
+}
+
+/* Pass number labels on map */
+.pass-label {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #1e40af !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.pass-label.headland-label {
+  color: #047857 !important;
+}
+
+.pass-label::before {
+  display: none !important;
+}
+
 /* Sidebar toggle button - hidden on desktop */
 .sidebar-toggle {
   display: none;
@@ -705,5 +781,12 @@
     inset: 0;
     z-index: 999;
     background: rgba(0, 0, 0, 0.3);
+  }
+
+  .pass-navigator {
+    top: auto;
+    bottom: 70px;
+    left: 10px;
+    right: auto;
   }
 }

@@ -1,10 +1,31 @@
-import { Polyline, CircleMarker } from "react-leaflet";
+import { Polyline, CircleMarker, Tooltip } from "react-leaflet";
 import type { RouteResult, Position } from "../algorithm/types";
 import type { LatLngExpression } from "leaflet";
 import { ArrowOverlay } from "./ArrowOverlay";
 
 interface RouteDisplayProps {
   route: RouteResult | null;
+  currentPass: number | null;
+}
+
+/** Return color/weight/opacity based on sequential number vs currentPass */
+function trackingStyle(
+  seqNum: number,
+  currentPass: number | null,
+  defaultColor: string,
+  defaultWeight: number,
+  defaultOpacity: number,
+) {
+  if (currentPass === null) {
+    return { color: defaultColor, weight: defaultWeight, opacity: defaultOpacity };
+  }
+  if (seqNum < currentPass) {
+    return { color: "#9ca3af", weight: defaultWeight, opacity: 0.5 };
+  }
+  if (seqNum === currentPass) {
+    return { color: "#f59e0b", weight: 5, opacity: 1.0 };
+  }
+  return { color: defaultColor, weight: defaultWeight, opacity: defaultOpacity };
 }
 
 /** Convert [lng, lat] to [lat, lng] for Leaflet */
@@ -65,7 +86,7 @@ function separateHeadlandSegments(
   return { laps, transits };
 }
 
-export function RouteDisplay({ route }: RouteDisplayProps) {
+export function RouteDisplay({ route, currentPass }: RouteDisplayProps) {
   if (!route || route.path.length < 2) return null;
 
   // Interior path = full path minus headland portion
@@ -87,15 +108,21 @@ export function RouteDisplay({ route }: RouteDisplayProps) {
   return (
     <>
       {/* Interior passes */}
-      {passes.map((seg, i) => (
-        <Polyline
-          key={`pass-${i}`}
-          positions={seg}
-          color="#2563eb"
-          weight={3}
-          opacity={0.8}
-        />
-      ))}
+      {passes.map((seg, i) => {
+        const seqNum = i + 1;
+        const style = trackingStyle(seqNum, currentPass, "#2563eb", 3, 0.8);
+        return (
+          <Polyline
+            key={`pass-${i}`}
+            positions={seg}
+            pathOptions={style}
+          >
+            <Tooltip permanent direction="center" className="pass-label">
+              {seqNum}
+            </Tooltip>
+          </Polyline>
+        );
+      })}
       {/* Interior turns */}
       {turns.map((seg, i) => (
         <Polyline
@@ -108,15 +135,21 @@ export function RouteDisplay({ route }: RouteDisplayProps) {
         />
       ))}
       {/* Headland laps (working) */}
-      {headlandLaps.map((seg, i) => (
-        <Polyline
-          key={`hlap-${i}`}
-          positions={seg}
-          color="#059669"
-          weight={3}
-          opacity={0.7}
-        />
-      ))}
+      {headlandLaps.map((seg, i) => {
+        const seqNum = passes.length + i + 1;
+        const style = trackingStyle(seqNum, currentPass, "#059669", 3, 0.7);
+        return (
+          <Polyline
+            key={`hlap-${i}`}
+            positions={seg}
+            pathOptions={style}
+          >
+            <Tooltip permanent direction="center" className="pass-label headland-label">
+              {seqNum}
+            </Tooltip>
+          </Polyline>
+        );
+      })}
       {/* Headland transits (空移動) */}
       {headlandTransits.map((seg, i) => (
         <Polyline
