@@ -7,7 +7,7 @@ interface GpsPanelProps {
   gps: GpsState;
   route: RouteResult | null;
   followMode: boolean;
-  entryPoint?: Position;
+  polygonCoords?: Position[];
   onStartTracking: () => void;
   onStopTracking: () => void;
   onToggleFollow: () => void;
@@ -50,11 +50,38 @@ function computeGuidance(
   return { distToRoute, progress, nearestIdx };
 }
 
+/** Find the nearest polygon vertex to the given position */
+function findNearestCorner(
+  position: Position,
+  coords: Position[],
+): Position | null {
+  if (coords.length === 0) return null;
+  // Exclude the closing vertex (same as first)
+  const vertices =
+    coords.length > 1 &&
+    coords[0][0] === coords[coords.length - 1][0] &&
+    coords[0][1] === coords[coords.length - 1][1]
+      ? coords.slice(0, -1)
+      : coords;
+
+  let best: Position = vertices[0];
+  let bestDist = Infinity;
+  const pt = turf.point(position);
+  for (const v of vertices) {
+    const d = turf.distance(pt, turf.point(v), { units: "meters" });
+    if (d < bestDist) {
+      bestDist = d;
+      best = v;
+    }
+  }
+  return best;
+}
+
 export function GpsPanel({
   gps,
   route,
   followMode,
-  entryPoint,
+  polygonCoords,
   onStartTracking,
   onStopTracking,
   onToggleFollow,
@@ -125,12 +152,15 @@ export function GpsPanel({
       {gps.isTracking && gps.position && (
         <div className="gps-offset">
           <h3>位置補正</h3>
-          {entryPoint && (
+          {polygonCoords && polygonCoords.length >= 3 && gps.rawPosition && (
             <button
               className="btn btn-gps-calibrate"
-              onClick={() => onCalibrate(entryPoint)}
+              onClick={() => {
+                const corner = findNearestCorner(gps.rawPosition!, polygonCoords);
+                if (corner) onCalibrate(corner);
+              }}
             >
-              出入口に合わせる
+              最寄りの角に合わせる
             </button>
           )}
           <div className="gps-nudge">

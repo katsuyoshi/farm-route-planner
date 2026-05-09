@@ -150,7 +150,7 @@ function App() {
           gps={gps}
           route={route}
           followMode={followMode}
-          entryPoint={polygon?.entryPoint}
+          polygonCoords={polygon?.coordinates}
           onStartTracking={gps.startTracking}
           onStopTracking={gps.stopTracking}
           onToggleFollow={() => setFollowMode((f) => !f)}
