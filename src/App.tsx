@@ -27,6 +27,7 @@ function App() {
   const [importError, setImportError] = useState<string | null>(null);
   const [followMode, setFollowMode] = useState(true);
   const [activeFieldId, setActiveFieldId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleCalculate = useCallback(() => {
     if (polygon) {
@@ -113,7 +114,17 @@ function App() {
 
   return (
     <>
-      <div className="sidebar">
+      <button
+        className="sidebar-toggle"
+        onClick={() => setSidebarOpen((o) => !o)}
+        aria-label="メニュー"
+      >
+        {sidebarOpen ? "\u2715" : "\u2630"}
+      </button>
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+      <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <ControlPanel
           config={config}
           onConfigChange={setConfig}
