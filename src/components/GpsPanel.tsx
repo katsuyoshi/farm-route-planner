@@ -7,9 +7,13 @@ interface GpsPanelProps {
   gps: GpsState;
   route: RouteResult | null;
   followMode: boolean;
+  entryPoint?: Position;
   onStartTracking: () => void;
   onStopTracking: () => void;
   onToggleFollow: () => void;
+  onCalibrate: (target: Position) => void;
+  onNudge: (dir: "north" | "south" | "east" | "west", meters: number) => void;
+  onResetOffset: () => void;
 }
 
 function formatMeters(m: number): string {
@@ -50,9 +54,13 @@ export function GpsPanel({
   gps,
   route,
   followMode,
+  entryPoint,
   onStartTracking,
   onStopTracking,
   onToggleFollow,
+  onCalibrate,
+  onNudge,
+  onResetOffset,
 }: GpsPanelProps) {
   const guidance = useMemo(() => {
     if (!gps.position || !route) return null;
@@ -111,6 +119,50 @@ export function GpsPanel({
 
       {gps.isTracking && gps.position && guidance && guidance.distToRoute > 5 && (
         <p className="gps-warning">ルートから離れています</p>
+      )}
+
+      {/* GPS offset controls */}
+      {gps.isTracking && gps.position && (
+        <div className="gps-offset">
+          <h3>位置補正</h3>
+          {entryPoint && (
+            <button
+              className="btn btn-gps-calibrate"
+              onClick={() => onCalibrate(entryPoint)}
+            >
+              出入口に合わせる
+            </button>
+          )}
+          <div className="gps-nudge">
+            <div className="gps-nudge-row">
+              <button className="btn-nudge" onClick={() => onNudge("north", 1)}>
+                N 1m
+              </button>
+            </div>
+            <div className="gps-nudge-row">
+              <button className="btn-nudge" onClick={() => onNudge("west", 1)}>
+                W 1m
+              </button>
+              <button className="btn-nudge btn-nudge-reset" onClick={onResetOffset}>
+                reset
+              </button>
+              <button className="btn-nudge" onClick={() => onNudge("east", 1)}>
+                E 1m
+              </button>
+            </div>
+            <div className="gps-nudge-row">
+              <button className="btn-nudge" onClick={() => onNudge("south", 1)}>
+                S 1m
+              </button>
+            </div>
+          </div>
+          {(gps.offset[0] !== 0 || gps.offset[1] !== 0) && (
+            <p className="gps-offset-info">
+              補正中: E{(gps.offset[0] * 111320 * Math.cos(((gps.rawPosition?.[1] ?? 39) * Math.PI) / 180)).toFixed(1)}m,
+              N{(gps.offset[1] * 110574).toFixed(1)}m
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

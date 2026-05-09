@@ -150,9 +150,13 @@ function App() {
           gps={gps}
           route={route}
           followMode={followMode}
+          entryPoint={polygon?.entryPoint}
           onStartTracking={gps.startTracking}
           onStopTracking={gps.stopTracking}
           onToggleFollow={() => setFollowMode((f) => !f)}
+          onCalibrate={gps.calibrate}
+          onNudge={gps.nudgeOffset}
+          onResetOffset={gps.resetOffset}
         />
       </div>
       <div className="map-container">

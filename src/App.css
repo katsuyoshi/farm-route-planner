@@ -561,6 +561,81 @@
   text-align: center;
 }
 
+.gps-offset {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.gps-offset h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.btn-gps-calibrate {
+  width: 100%;
+  padding: 6px 12px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.btn-gps-calibrate:active {
+  background: #6d28d9;
+}
+
+.gps-nudge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.gps-nudge-row {
+  display: flex;
+  gap: 2px;
+}
+
+.btn-nudge {
+  width: 48px;
+  height: 32px;
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  background: #f9fafb;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.btn-nudge:active {
+  background: #e5e7eb;
+}
+
+.btn-nudge-reset {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.btn-nudge-reset:active {
+  background: #fecaca;
+}
+
+.gps-offset-info {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #7c3aed;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* Sidebar toggle button - hidden on desktop */
 .sidebar-toggle {
   display: none;
